@@ -350,8 +350,8 @@ public class TextFileOutputMeta extends BaseTransformMeta<TextFileOutput, TextFi
     fileSettings = new FileSettings();
     outputFields = new ArrayList<>();
     createParentFolder = true;
-    separator = ";";
-    enclosure = "\"";
+    separator = "";
+    enclosure = "";
     enclosureForced = false;
     enclosureFixDisabled = false;
     headerEnabled = true;
@@ -382,6 +382,12 @@ public class TextFileOutputMeta extends BaseTransformMeta<TextFileOutput, TextFi
         field -> {
           this.outputFields.add(new TextFileField(field));
         });
+  }
+
+  @Override
+  public void setDefault() {
+    separator = ";";
+    enclosure = "\"";
   }
 
   @Override
