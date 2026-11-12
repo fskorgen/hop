@@ -1067,21 +1067,18 @@ public class RowMeta implements IRowMeta {
   @Override
   public int compare(Object[] rowData1, Object[] rowData2, int[] fieldnrs)
       throws HopValueException {
-    lock.readLock().lock();
-    try {
-      for (int fieldnr : fieldnrs) {
-        IValueMeta valueMeta = getValueMeta(fieldnr);
+    // No read lock: one snapshot per call is as consistent as the lock was, see #snapshot
+    IValueMeta[] valueMetas = snapshot;
+    for (int fieldnr : fieldnrs) {
+      IValueMeta valueMeta = valueMetas[fieldnr];
 
-        int cmp = valueMeta.compare(rowData1[fieldnr], rowData2[fieldnr]);
-        if (cmp != 0) {
-          return cmp;
-        }
+      int cmp = valueMeta.compare(rowData1[fieldnr], rowData2[fieldnr]);
+      if (cmp != 0) {
+        return cmp;
       }
-
-      return 0;
-    } finally {
-      lock.readLock().unlock();
     }
+
+    return 0;
   }
 
   /**
@@ -1097,21 +1094,18 @@ public class RowMeta implements IRowMeta {
   @Override
   public boolean equals(Object[] rowData1, Object[] rowData2, int[] fieldnrs)
       throws HopValueException {
-    lock.readLock().lock();
-    try {
-      for (int fieldnr : fieldnrs) {
-        IValueMeta valueMeta = getValueMeta(fieldnr);
+    // No read lock: one snapshot per call is as consistent as the lock was, see #snapshot
+    IValueMeta[] valueMetas = snapshot;
+    for (int fieldnr : fieldnrs) {
+      IValueMeta valueMeta = valueMetas[fieldnr];
 
-        int cmp = valueMeta.compare(rowData1[fieldnr], rowData2[fieldnr]);
-        if (cmp != 0) {
-          return false;
-        }
+      int cmp = valueMeta.compare(rowData1[fieldnr], rowData2[fieldnr]);
+      if (cmp != 0) {
+        return false;
       }
-
-      return true;
-    } finally {
-      lock.readLock().unlock();
     }
+
+    return true;
   }
 
   /**
@@ -1129,21 +1123,18 @@ public class RowMeta implements IRowMeta {
   public int compare(Object[] rowData1, Object[] rowData2, int[] fieldnrs1, int[] fieldnrs2)
       throws HopValueException {
     int len = Math.min(fieldnrs1.length, fieldnrs2.length);
-    lock.readLock().lock();
-    try {
-      for (int i = 0; i < len; i++) {
-        IValueMeta valueMeta = getValueMeta(fieldnrs1[i]);
+    // No read lock: one snapshot per call is as consistent as the lock was, see #snapshot
+    IValueMeta[] valueMetas = snapshot;
+    for (int i = 0; i < len; i++) {
+      IValueMeta valueMeta = valueMetas[fieldnrs1[i]];
 
-        int cmp = valueMeta.compare(rowData1[fieldnrs1[i]], rowData2[fieldnrs2[i]]);
-        if (cmp != 0) {
-          return cmp;
-        }
+      int cmp = valueMeta.compare(rowData1[fieldnrs1[i]], rowData2[fieldnrs2[i]]);
+      if (cmp != 0) {
+        return cmp;
       }
-
-      return 0;
-    } finally {
-      lock.readLock().unlock();
     }
+
+    return 0;
   }
 
   /**
@@ -1163,22 +1154,19 @@ public class RowMeta implements IRowMeta {
       Object[] rowData1, IRowMeta rowMeta2, Object[] rowData2, int[] fieldnrs1, int[] fieldnrs2)
       throws HopValueException {
     int len = Math.min(fieldnrs1.length, fieldnrs2.length);
-    lock.readLock().lock();
-    try {
-      for (int i = 0; i < len; i++) {
-        IValueMeta valueMeta1 = getValueMeta(fieldnrs1[i]);
-        IValueMeta valueMeta2 = rowMeta2.getValueMeta(fieldnrs2[i]);
+    // No read lock: one snapshot per call is as consistent as the lock was, see #snapshot
+    IValueMeta[] valueMetas = snapshot;
+    for (int i = 0; i < len; i++) {
+      IValueMeta valueMeta1 = valueMetas[fieldnrs1[i]];
+      IValueMeta valueMeta2 = rowMeta2.getValueMeta(fieldnrs2[i]);
 
-        int cmp = valueMeta1.compare(rowData1[fieldnrs1[i]], valueMeta2, rowData2[fieldnrs2[i]]);
-        if (cmp != 0) {
-          return cmp;
-        }
+      int cmp = valueMeta1.compare(rowData1[fieldnrs1[i]], valueMeta2, rowData2[fieldnrs2[i]]);
+      if (cmp != 0) {
+        return cmp;
       }
-
-      return 0;
-    } finally {
-      lock.readLock().unlock();
     }
+
+    return 0;
   }
 
   /**
@@ -1192,21 +1180,18 @@ public class RowMeta implements IRowMeta {
    */
   @Override
   public int compare(Object[] rowData1, Object[] rowData2) throws HopValueException {
-    lock.readLock().lock();
-    try {
-      for (int i = 0; i < size(); i++) {
-        IValueMeta valueMeta = getValueMeta(i);
+    // No read lock: one snapshot per call is as consistent as the lock was, see #snapshot
+    IValueMeta[] valueMetas = snapshot;
+    for (int i = 0; i < valueMetas.length; i++) {
+      IValueMeta valueMeta = valueMetas[i];
 
-        int cmp = valueMeta.compare(rowData1[i], rowData2[i]);
-        if (cmp != 0) {
-          return cmp;
-        }
+      int cmp = valueMeta.compare(rowData1[i], rowData2[i]);
+      if (cmp != 0) {
+        return cmp;
       }
-
-      return 0;
-    } finally {
-      lock.readLock().unlock();
     }
+
+    return 0;
   }
 
   /**
