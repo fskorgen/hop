@@ -184,12 +184,7 @@ class ValueMetaAvroRecordTest {
                 + "[\"long\",\"null\"]},{\"name\":\"str\",\"type\":[\"string\",\"null\"]},"
                 + "{\"name\":\"uuid\",\"type\":[\"string\",\"null\"]}]},\"precision\":-1,\"name\":"
                 + "\"test\",\"length\":-1,\"conversionMask\":null,\"type\":20}");
-    // The base class adds the field's formatting settings, which depend on the default locale:
-    // check the schema and the basics only.
-    expectJsonNode
-        .fieldNames()
-        .forEachRemaining(
-            field -> assertEquals(expectJsonNode.get(field), valueNode.get(field), field));
+    assertEquals(valueNode, expectJsonNode);
 
     // Read it back...
     //
